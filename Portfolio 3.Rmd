@@ -1,0 +1,16 @@
+---
+title: "Portfolio 3"
+author: "Adam"
+date: "4/27/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## What is this document?
+
+The goal of this document is to create tables that look better than the ones in the analyses doc, for presentation quality.
+
+
