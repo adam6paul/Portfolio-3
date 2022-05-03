@@ -198,12 +198,208 @@ summary {
 <blockquote>
 <p>The purpose of this portfolio is to create tables and visualizations of the results from Study 1.</p>
 </blockquote>
-<p>This will include improving the visual quality of the correlation table, and may include putting together a table for the VOI. I would learn how to improve the vizualization of the model, but I doubt I will use that skill in the future, as I liked putting it together manually in powerpoint. So instead, I may practice embedding images within a markdown.</p>
-<div id="bringing-in-the-data" class="section level3">
-<h3>Bringing in the data</h3>
-<div id="correlation-table" class="section level5">
-<h5>Correlation table</h5>
+<p>The goal of this portfolio was to explore the experience of improving tables within R. The results were less than stellar. In general, I found that I prefer to make the visualizations outside of R.</p>
+<div id="getting-things-working" class="section level3">
+<h3>Getting things working</h3>
+<p>First, we need to load the necessary packages.</p>
+<pre class="r"><code>library(&#39;psych&#39;)
+library(&#39;reshape2&#39;)
+library(&#39;dplyr&#39;)
+library(&#39;lavaan&#39;)
+library(&#39;Rcpp&#39;)
+library(&#39;lme4&#39;)
+library(&#39;lmerTest&#39;)
+library(&#39;OpenMx&#39;)
+library(&#39;semPlot&#39;)
+library(&#39;tidyverse&#39;)
+library(&#39;Hmisc&#39;)
+library(&#39;readr&#39;)
+library(&#39;xtable&#39;)</code></pre>
+<p>Now, we have to bring in the data from portfolio 1.</p>
+<pre class="r"><code>study1 &lt;- read_csv(&quot;data/Study1_data_R_cleaned.csv&quot;)
+
+# Ensuring the dataframe is a tibble.
+as_tibble(study1)
+## # A tibble: 301 x 83
+##    Durationinseconds school_belong school_fit_in school_outsider school_comfort
+##                &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;           &lt;dbl&gt;          &lt;dbl&gt;
+##  1               245             4             4               5              4
+##  2               249             6             6               2              6
+##  3               170             6             6               2              6
+##  4               281             5             4               2              4
+##  5               108             4             6               2              5
+##  6               458             5             5               3              6
+##  7               128             5             5               4              6
+##  8               291             6             6               2              6
+##  9               123             5             5               5              6
+## 10               414             2             1               6              5
+## # ... with 291 more rows, and 78 more variables: school_uncertain &lt;dbl&gt;,
+## #   class_department &lt;chr&gt;, class_name &lt;chr&gt;, class_belong &lt;dbl&gt;,
+## #   class_fit_in &lt;dbl&gt;, class_outsider &lt;dbl&gt;, class_comfort &lt;dbl&gt;,
+## #   class_uncertain &lt;dbl&gt;, class_know_prior &lt;dbl&gt;, cdiscl_private &lt;dbl&gt;,
+## #   cdiscl_self_talk &lt;dbl&gt;, class_speak_up &lt;dbl&gt;, class_share_opinion &lt;dbl&gt;,
+## #   class_active_partic &lt;dbl&gt;, cdiscl_prompt_prof &lt;dbl&gt;,
+## #   cdiscl_prompt_ecour &lt;dbl&gt;, group_use &lt;dbl&gt;, group_consistency &lt;dbl&gt;, ...
+
+#Taking a look at the table.
+View(study1)</code></pre>
 </div>
+<div id="correlation-table" class="section level3">
+<h3>Correlation table</h3>
+<p>Now, the first thing I want to do is learn how to make the correlation table a little less ugly. Because to be honest, the base output is not particularly readable. This is how it appeared in portfolio 2:</p>
+<p>I used a package called hmisc that conflicts with psych, so I had to load it to get it to work, then unload it manually later. Messy, but I understand how to work with hmisc so I’m sticking with it.</p>
+<p>The first thing the code does is create a subset that only has the variables we want to look at the correlations for.</p>
+<p>Then, it runs the correlations with p-values.</p>
+<pre class="r"><code>correlations &lt;- study1 %&gt;%
+        select(class_belong_comp4, school_belong_comp4, class_disclose_comp2, group_disclose_comp2, cdiscl_prompt_comp2, gdiscl_prompt_comp2)
+
+rcorr(as.matrix(correlations))</code></pre>
+<pre><code>##                      class_belong_comp4 school_belong_comp4
+## class_belong_comp4                 1.00                0.54
+## school_belong_comp4                0.54                1.00
+## class_disclose_comp2               0.28                0.16
+## group_disclose_comp2               0.23                0.22
+## cdiscl_prompt_comp2                0.20                0.12
+## gdiscl_prompt_comp2                0.11                0.14
+##                      class_disclose_comp2 group_disclose_comp2
+## class_belong_comp4                   0.28                 0.23
+## school_belong_comp4                  0.16                 0.22
+## class_disclose_comp2                 1.00                 0.71
+## group_disclose_comp2                 0.71                 1.00
+## cdiscl_prompt_comp2                  0.53                 0.45
+## gdiscl_prompt_comp2                  0.41                 0.52
+##                      cdiscl_prompt_comp2 gdiscl_prompt_comp2
+## class_belong_comp4                  0.20                0.11
+## school_belong_comp4                 0.12                0.14
+## class_disclose_comp2                0.53                0.41
+## group_disclose_comp2                0.45                0.52
+## cdiscl_prompt_comp2                 1.00                0.73
+## gdiscl_prompt_comp2                 0.73                1.00
+## 
+## n
+##                      class_belong_comp4 school_belong_comp4
+## class_belong_comp4                  301                 301
+## school_belong_comp4                 301                 301
+## class_disclose_comp2                301                 301
+## group_disclose_comp2                178                 178
+## cdiscl_prompt_comp2                 301                 301
+## gdiscl_prompt_comp2                 178                 178
+##                      class_disclose_comp2 group_disclose_comp2
+## class_belong_comp4                    301                  178
+## school_belong_comp4                   301                  178
+## class_disclose_comp2                  301                  178
+## group_disclose_comp2                  178                  178
+## cdiscl_prompt_comp2                   301                  178
+## gdiscl_prompt_comp2                   178                  178
+##                      cdiscl_prompt_comp2 gdiscl_prompt_comp2
+## class_belong_comp4                   301                 178
+## school_belong_comp4                  301                 178
+## class_disclose_comp2                 301                 178
+## group_disclose_comp2                 178                 178
+## cdiscl_prompt_comp2                  301                 178
+## gdiscl_prompt_comp2                  178                 178
+## 
+## P
+##                      class_belong_comp4 school_belong_comp4
+## class_belong_comp4                      0.0000             
+## school_belong_comp4  0.0000                                
+## class_disclose_comp2 0.0000             0.0053             
+## group_disclose_comp2 0.0024             0.0028             
+## cdiscl_prompt_comp2  0.0005             0.0346             
+## gdiscl_prompt_comp2  0.1339             0.0536             
+##                      class_disclose_comp2 group_disclose_comp2
+## class_belong_comp4   0.0000               0.0024              
+## school_belong_comp4  0.0053               0.0028              
+## class_disclose_comp2                      0.0000              
+## group_disclose_comp2 0.0000                                   
+## cdiscl_prompt_comp2  0.0000               0.0000              
+## gdiscl_prompt_comp2  0.0000               0.0000              
+##                      cdiscl_prompt_comp2 gdiscl_prompt_comp2
+## class_belong_comp4   0.0005              0.1339             
+## school_belong_comp4  0.0346              0.0536             
+## class_disclose_comp2 0.0000              0.0000             
+## group_disclose_comp2 0.0000              0.0000             
+## cdiscl_prompt_comp2                      0.0000             
+## gdiscl_prompt_comp2  0.0000</code></pre>
+<p>It outputs the correlation, then the n, then the p value. Very unpleasant to look at. Let’s see if we can’t make it look better.</p>
+<p>The first thing we need to do is instead of just running the correlation we want to make it into an object so I can make adjustments to it.</p>
+<pre class="r"><code>corr_matrix &lt;- rcorr(as.matrix(correlations))
+
+corr_matrix</code></pre>
+<p>Looks the same, but now the correlation matrix is an object I can manipulate.</p>
+<blockquote>
+<p>After a lot of searching, I’ve decided that using R this way is a terrible way of getting correlations tables, and making them in word is going to remain my primary way of handling them. In a way, much of what I learned in these portfolios is that I prefer to do everything that isn’t the actual analyses outside of R.</p>
+</blockquote>
+<p>However, below is a function found online for creating an html table that is much better to look at (in html, at least).</p>
+<p>(<a href="https://www.r-bloggers.com/2017/08/elegant-correlation-table-using-xtable-r-package/" class="uri">https://www.r-bloggers.com/2017/08/elegant-correlation-table-using-xtable-r-package/</a>)</p>
+<pre class="r"><code># x is a matrix containing the data
+# method : correlation method. &quot;pearson&quot;&quot; or &quot;spearman&quot;&quot; is supported
+# removeTriangle : remove upper or lower triangle
+# results :  if &quot;html&quot; or &quot;latex&quot;
+  # the results will be displayed in html or latex format
+corstars &lt;-function(x, method=c(&quot;pearson&quot;, &quot;spearman&quot;), removeTriangle=c(&quot;upper&quot;, &quot;lower&quot;),
+                     result=c(&quot;none&quot;, &quot;html&quot;, &quot;latex&quot;)){
+    #Compute correlation matrix
+    require(Hmisc)
+    x &lt;- as.matrix(x)
+    correlation_matrix&lt;-rcorr(x, type=method[1])
+    R &lt;- correlation_matrix$r # Matrix of correlation coeficients
+    p &lt;- correlation_matrix$P # Matrix of p-value 
+    
+    ## Define notions for significance levels; spacing is important.
+    mystars &lt;- ifelse(p &lt; .0001, &quot;****&quot;, ifelse(p &lt; .001, &quot;*** &quot;, ifelse(p &lt; .01, &quot;**  &quot;, ifelse(p &lt; .05, &quot;*   &quot;, &quot;    &quot;))))
+    
+    ## trunctuate the correlation matrix to two decimal
+    R &lt;- format(round(cbind(rep(-1.11, ncol(x)), R), 2))[,-1]
+    
+    ## build a new matrix that includes the correlations with their appropriate stars
+    Rnew &lt;- matrix(paste(R, mystars, sep=&quot;&quot;), ncol=ncol(x))
+    diag(Rnew) &lt;- paste(diag(R), &quot; &quot;, sep=&quot;&quot;)
+    rownames(Rnew) &lt;- colnames(x)
+    colnames(Rnew) &lt;- paste(colnames(x), &quot;&quot;, sep=&quot;&quot;)
+    
+    ## remove upper triangle of correlation matrix
+    if(removeTriangle[1]==&quot;upper&quot;){
+      Rnew &lt;- as.matrix(Rnew)
+      Rnew[upper.tri(Rnew, diag = TRUE)] &lt;- &quot;&quot;
+      Rnew &lt;- as.data.frame(Rnew)
+    }
+    
+    ## remove lower triangle of correlation matrix
+    else if(removeTriangle[1]==&quot;lower&quot;){
+      Rnew &lt;- as.matrix(Rnew)
+      Rnew[lower.tri(Rnew, diag = TRUE)] &lt;- &quot;&quot;
+      Rnew &lt;- as.data.frame(Rnew)
+    }
+    
+    ## remove last column and return the correlation matrix
+    Rnew &lt;- cbind(Rnew[1:length(Rnew)-1])
+    if (result[1]==&quot;none&quot;) return(Rnew)
+    else{
+      if(result[1]==&quot;html&quot;) print(xtable(Rnew), type=&quot;html&quot;)
+      else print(xtable(Rnew), type=&quot;latex&quot;) 
+    }
+} </code></pre>
+<p>Once that is done, here is the actual code to get the html output. I couldn’t figure out how to embed html into the knited document, and since I don’t intend to use this methodology in the future, it didn’t seem like a productive rabbit hole to fall down.</p>
+<pre class="r"><code>print(corstars(correlations, method=c(&quot;pearson&quot;), result=&quot;html&quot;), type=html, comment=FALSE)</code></pre>
+<pre><code>## &lt;!-- html table generated in R 4.0.5 by xtable 1.8-4 package --&gt;
+## &lt;!-- Tue May 03 17:24:13 2022 --&gt;
+## &lt;table border=1&gt;
+## &lt;tr&gt; &lt;th&gt;  &lt;/th&gt; &lt;th&gt; class_belong_comp4 &lt;/th&gt; &lt;th&gt; school_belong_comp4 &lt;/th&gt; &lt;th&gt; class_disclose_comp2 &lt;/th&gt; &lt;th&gt; group_disclose_comp2 &lt;/th&gt; &lt;th&gt; cdiscl_prompt_comp2 &lt;/th&gt;  &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; class_belong_comp4 &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; school_belong_comp4 &lt;/td&gt; &lt;td&gt;  0.54**** &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; class_disclose_comp2 &lt;/td&gt; &lt;td&gt;  0.28**** &lt;/td&gt; &lt;td&gt;  0.16**   &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; group_disclose_comp2 &lt;/td&gt; &lt;td&gt;  0.23**   &lt;/td&gt; &lt;td&gt;  0.22**   &lt;/td&gt; &lt;td&gt;  0.71**** &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; cdiscl_prompt_comp2 &lt;/td&gt; &lt;td&gt;  0.20***  &lt;/td&gt; &lt;td&gt;  0.12*    &lt;/td&gt; &lt;td&gt;  0.53**** &lt;/td&gt; &lt;td&gt;  0.45**** &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;
+##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; gdiscl_prompt_comp2 &lt;/td&gt; &lt;td&gt;  0.11     &lt;/td&gt; &lt;td&gt;  0.14     &lt;/td&gt; &lt;td&gt;  0.41**** &lt;/td&gt; &lt;td&gt;  0.52**** &lt;/td&gt; &lt;td&gt;  0.73**** &lt;/td&gt; &lt;/tr&gt;
+##    &lt;/table&gt;
+## [1] &quot;&lt;!-- html table generated in R 4.0.5 by xtable 1.8-4 package --&gt;\n&lt;!-- Tue May 03 17:24:13 2022 --&gt;\n&lt;table border=1&gt;\n&lt;tr&gt; &lt;th&gt;  &lt;/th&gt; &lt;th&gt; class_belong_comp4 &lt;/th&gt; &lt;th&gt; school_belong_comp4 &lt;/th&gt; &lt;th&gt; class_disclose_comp2 &lt;/th&gt; &lt;th&gt; group_disclose_comp2 &lt;/th&gt; &lt;th&gt; cdiscl_prompt_comp2 &lt;/th&gt;  &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; class_belong_comp4 &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; school_belong_comp4 &lt;/td&gt; &lt;td&gt;  0.54**** &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; class_disclose_comp2 &lt;/td&gt; &lt;td&gt;  0.28**** &lt;/td&gt; &lt;td&gt;  0.16**   &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; group_disclose_comp2 &lt;/td&gt; &lt;td&gt;  0.23**   &lt;/td&gt; &lt;td&gt;  0.22**   &lt;/td&gt; &lt;td&gt;  0.71**** &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; cdiscl_prompt_comp2 &lt;/td&gt; &lt;td&gt;  0.20***  &lt;/td&gt; &lt;td&gt;  0.12*    &lt;/td&gt; &lt;td&gt;  0.53**** &lt;/td&gt; &lt;td&gt;  0.45**** &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; gdiscl_prompt_comp2 &lt;/td&gt; &lt;td&gt;  0.11     &lt;/td&gt; &lt;td&gt;  0.14     &lt;/td&gt; &lt;td&gt;  0.41**** &lt;/td&gt; &lt;td&gt;  0.52**** &lt;/td&gt; &lt;td&gt;  0.73**** &lt;/td&gt; &lt;/tr&gt;\n   &lt;/table&gt;\n&quot;</code></pre>
+<blockquote>
+<p>p &lt; .0001 ‘****’, p &lt; .001 ‘<em><strong>’, p &lt; .01 ’</strong>’, p &lt; .05 ’</em>’</p>
+</blockquote>
+</div>
+<div id="finishing-up" class="section level3">
+<h3>Finishing up</h3>
 </div>
 
 

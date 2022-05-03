@@ -9,14 +9,13 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-> The purpose of this portfolio is to create tables and visualizations of the results from Study 1.
+The goal of this portfolio was to explore the experience of vizualizations within R. The results were less than stellar. In general, I found that I prefer to make the visualizations outside of R. However, it was valuable to learn about this.
 
-This will include improving the visual quality of the correlation table, and may include putting together a table for the VOI. I would learn how to improve the vizualization of the model, but I doubt I will use that skill in the future, as I liked putting it together manually in powerpoint. So instead, I may practice embedding images within a markdown.
-
-### Getting things working
+#### Getting things working
 
 First, we need to load the necessary packages.
 
+```{r packages, echo=TRUE, message=FALSE}
 library('psych')
 library('reshape2')
 library('dplyr')
@@ -29,21 +28,24 @@ library('semPlot')
 library('tidyverse')
 library('Hmisc')
 library('readr')
+library('xtable')
+```
 
-rm(list=ls())
 
 Now, we have to bring in the data from portfolio 1.
 
-```{r loading data}
-study1 <- read_csv("Study1_data_R_cleaned.csv")
+```{r loading data, echo=TRUE, collapse=TRUE, message=FALSE}
+study1 <- read_csv("data/Study1_data_R_cleaned.csv")
+
+# Ensuring the dataframe is a tibble.
+as_tibble(study1)
+
+#Taking a look at the table.
 View(study1)
 ```
 
-Ensuring the dataframe is a tibble.
 
-as_tibble(study1)
-
-##### Correlation table
+### Correlation table
 
 Now, the first thing I want to do is learn how to make the correlation table a little less ugly. Because to be honest, the base output is not particularly readable. This is how it appeared in portfolio 2:
 
@@ -66,20 +68,21 @@ It outputs the correlation, then the n, then the p value. Very unpleasant to loo
 
 The first thing we need to do is instead of just running the correlation we want to make it into an object so I can make adjustments to it.
 
-```{r correlation matrix}
+```{r correlation matrix, echo=TRUE, results='hide'}
 corr_matrix <- rcorr(as.matrix(correlations))
 
 corr_matrix
 ```
-
-
+      
 Looks the same, but now the correlation matrix is an object I can manipulate.
 
-Now, I'd like to make it so that there is not repeated output on the top of the table.
+>After a lot of searching, I've decided that using R this way is a terrible way of getting correlations tables, and making them in word is going to remain my primary way of handling them. In a way, much of what I learned in these portfolios is that I prefer to do everything that isn't the actual analyses outside of R.
 
-upper.tri(corr_matrix, diag= TRUE)
+However, below is a function found online for creating an html table that is much better to look at (in html, at least).
 
-```{r }
+(https://www.r-bloggers.com/2017/08/elegant-correlation-table-using-xtable-r-package/)
+
+```{r corstars function}
 # x is a matrix containing the data
 # method : correlation method. "pearson"" or "spearman"" is supported
 # removeTriangle : remove upper or lower triangle
@@ -130,17 +133,15 @@ corstars <-function(x, method=c("pearson", "spearman"), removeTriangle=c("upper"
 } 
 ```
 
-```{r}
-corstars(correlations, method=c("pearson"), result="html")
-```
+
+
+Once that is done, here is the actual code to get the html output. I couldn't figure out how to embed html into the knited document, and since I don't intend to use this methodology in the future, it didn't seem like a productive rabbit hole to fall down.
 
 ```{r}
-corr_table <- apaCorr(as.matrix(correlations), corrtype = "pearson")
-
-kable(irisStars, format = "markdown")
-
+print(corstars(correlations, method=c("pearson"), result="html"), type=html, comment=FALSE)
 ```
 
+> p < .0001 ‘****’, p < .001 ‘***’, p < .01 '**', p < .05 '*'
 
 
 ### Finishing up
