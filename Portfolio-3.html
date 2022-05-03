@@ -195,12 +195,9 @@ summary {
 </div>
 
 
-<blockquote>
-<p>The purpose of this portfolio is to create tables and visualizations of the results from Study 1.</p>
-</blockquote>
-<p>The goal of this portfolio was to explore the experience of improving tables within R. The results were less than stellar. In general, I found that I prefer to make the visualizations outside of R.</p>
-<div id="getting-things-working" class="section level3">
-<h3>Getting things working</h3>
+<p>The goal of this portfolio was to explore the experience of vizualizations within R. The results were less than stellar. In general, I found that I prefer to make the visualizations outside of R. However, it was valuable to learn about this.</p>
+<div id="getting-things-working" class="section level4">
+<h4>Getting things working</h4>
 <p>First, we need to load the necessary packages.</p>
 <pre class="r"><code>library(&#39;psych&#39;)
 library(&#39;reshape2&#39;)
@@ -383,7 +380,7 @@ corstars &lt;-function(x, method=c(&quot;pearson&quot;, &quot;spearman&quot;), r
 <p>Once that is done, here is the actual code to get the html output. I couldn’t figure out how to embed html into the knited document, and since I don’t intend to use this methodology in the future, it didn’t seem like a productive rabbit hole to fall down.</p>
 <pre class="r"><code>print(corstars(correlations, method=c(&quot;pearson&quot;), result=&quot;html&quot;), type=html, comment=FALSE)</code></pre>
 <pre><code>## &lt;!-- html table generated in R 4.0.5 by xtable 1.8-4 package --&gt;
-## &lt;!-- Tue May 03 17:24:13 2022 --&gt;
+## &lt;!-- Tue May 03 17:29:25 2022 --&gt;
 ## &lt;table border=1&gt;
 ## &lt;tr&gt; &lt;th&gt;  &lt;/th&gt; &lt;th&gt; class_belong_comp4 &lt;/th&gt; &lt;th&gt; school_belong_comp4 &lt;/th&gt; &lt;th&gt; class_disclose_comp2 &lt;/th&gt; &lt;th&gt; group_disclose_comp2 &lt;/th&gt; &lt;th&gt; cdiscl_prompt_comp2 &lt;/th&gt;  &lt;/tr&gt;
 ##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; class_belong_comp4 &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;
@@ -393,7 +390,7 @@ corstars &lt;-function(x, method=c(&quot;pearson&quot;, &quot;spearman&quot;), r
 ##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; cdiscl_prompt_comp2 &lt;/td&gt; &lt;td&gt;  0.20***  &lt;/td&gt; &lt;td&gt;  0.12*    &lt;/td&gt; &lt;td&gt;  0.53**** &lt;/td&gt; &lt;td&gt;  0.45**** &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;
 ##   &lt;tr&gt; &lt;td align=&quot;right&quot;&gt; gdiscl_prompt_comp2 &lt;/td&gt; &lt;td&gt;  0.11     &lt;/td&gt; &lt;td&gt;  0.14     &lt;/td&gt; &lt;td&gt;  0.41**** &lt;/td&gt; &lt;td&gt;  0.52**** &lt;/td&gt; &lt;td&gt;  0.73**** &lt;/td&gt; &lt;/tr&gt;
 ##    &lt;/table&gt;
-## [1] &quot;&lt;!-- html table generated in R 4.0.5 by xtable 1.8-4 package --&gt;\n&lt;!-- Tue May 03 17:24:13 2022 --&gt;\n&lt;table border=1&gt;\n&lt;tr&gt; &lt;th&gt;  &lt;/th&gt; &lt;th&gt; class_belong_comp4 &lt;/th&gt; &lt;th&gt; school_belong_comp4 &lt;/th&gt; &lt;th&gt; class_disclose_comp2 &lt;/th&gt; &lt;th&gt; group_disclose_comp2 &lt;/th&gt; &lt;th&gt; cdiscl_prompt_comp2 &lt;/th&gt;  &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; class_belong_comp4 &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; school_belong_comp4 &lt;/td&gt; &lt;td&gt;  0.54**** &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; class_disclose_comp2 &lt;/td&gt; &lt;td&gt;  0.28**** &lt;/td&gt; &lt;td&gt;  0.16**   &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; group_disclose_comp2 &lt;/td&gt; &lt;td&gt;  0.23**   &lt;/td&gt; &lt;td&gt;  0.22**   &lt;/td&gt; &lt;td&gt;  0.71**** &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; cdiscl_prompt_comp2 &lt;/td&gt; &lt;td&gt;  0.20***  &lt;/td&gt; &lt;td&gt;  0.12*    &lt;/td&gt; &lt;td&gt;  0.53**** &lt;/td&gt; &lt;td&gt;  0.45**** &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; gdiscl_prompt_comp2 &lt;/td&gt; &lt;td&gt;  0.11     &lt;/td&gt; &lt;td&gt;  0.14     &lt;/td&gt; &lt;td&gt;  0.41**** &lt;/td&gt; &lt;td&gt;  0.52**** &lt;/td&gt; &lt;td&gt;  0.73**** &lt;/td&gt; &lt;/tr&gt;\n   &lt;/table&gt;\n&quot;</code></pre>
+## [1] &quot;&lt;!-- html table generated in R 4.0.5 by xtable 1.8-4 package --&gt;\n&lt;!-- Tue May 03 17:29:25 2022 --&gt;\n&lt;table border=1&gt;\n&lt;tr&gt; &lt;th&gt;  &lt;/th&gt; &lt;th&gt; class_belong_comp4 &lt;/th&gt; &lt;th&gt; school_belong_comp4 &lt;/th&gt; &lt;th&gt; class_disclose_comp2 &lt;/th&gt; &lt;th&gt; group_disclose_comp2 &lt;/th&gt; &lt;th&gt; cdiscl_prompt_comp2 &lt;/th&gt;  &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; class_belong_comp4 &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; school_belong_comp4 &lt;/td&gt; &lt;td&gt;  0.54**** &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; class_disclose_comp2 &lt;/td&gt; &lt;td&gt;  0.28**** &lt;/td&gt; &lt;td&gt;  0.16**   &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; group_disclose_comp2 &lt;/td&gt; &lt;td&gt;  0.23**   &lt;/td&gt; &lt;td&gt;  0.22**   &lt;/td&gt; &lt;td&gt;  0.71**** &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; cdiscl_prompt_comp2 &lt;/td&gt; &lt;td&gt;  0.20***  &lt;/td&gt; &lt;td&gt;  0.12*    &lt;/td&gt; &lt;td&gt;  0.53**** &lt;/td&gt; &lt;td&gt;  0.45**** &lt;/td&gt; &lt;td&gt;  &lt;/td&gt; &lt;/tr&gt;\n  &lt;tr&gt; &lt;td align=\&quot;right\&quot;&gt; gdiscl_prompt_comp2 &lt;/td&gt; &lt;td&gt;  0.11     &lt;/td&gt; &lt;td&gt;  0.14     &lt;/td&gt; &lt;td&gt;  0.41**** &lt;/td&gt; &lt;td&gt;  0.52**** &lt;/td&gt; &lt;td&gt;  0.73**** &lt;/td&gt; &lt;/tr&gt;\n   &lt;/table&gt;\n&quot;</code></pre>
 <blockquote>
 <p>p &lt; .0001 ‘****’, p &lt; .001 ‘<em><strong>’, p &lt; .01 ’</strong>’, p &lt; .05 ’</em>’</p>
 </blockquote>
