@@ -9,8 +9,138 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## What is this document?
+> The purpose of this portfolio is to create tables and visualizations of the results from Study 1.
 
-The goal of this document is to create tables that look better than the ones in the analyses doc, for presentation quality.
+This will include improving the visual quality of the correlation table, and may include putting together a table for the VOI. I would learn how to improve the vizualization of the model, but I doubt I will use that skill in the future, as I liked putting it together manually in powerpoint. So instead, I may practice embedding images within a markdown.
+
+### Getting things working
+
+First, we need to load the necessary packages.
+
+library('psych')
+library('reshape2')
+library('dplyr')
+library('lavaan')
+library('Rcpp')
+library('lme4')
+library('lmerTest')
+library('OpenMx')
+library('semPlot')
+library('tidyverse')
+library('Hmisc')
+library('readr')
+
+rm(list=ls())
+
+Now, we have to bring in the data from portfolio 1.
+
+```{r loading data}
+study1 <- read_csv("Study1_data_R_cleaned.csv")
+View(study1)
+```
+
+Ensuring the dataframe is a tibble.
+
+as_tibble(study1)
+
+##### Correlation table
+
+Now, the first thing I want to do is learn how to make the correlation table a little less ugly. Because to be honest, the base output is not particularly readable. This is how it appeared in portfolio 2:
+
+I used a package called hmisc that conflicts with psych, so I had to load it to get it to work, then unload it manually later. Messy, but I understand how to work with hmisc so I'm sticking with it.
+
+The first thing the code does is create a subset that only has the variables we want to look at the correlations for.
+
+Then, it runs the correlations with p-values.
 
 
+```{r bivariate correlations}
+correlations <- study1 %>%
+        select(class_belong_comp4, school_belong_comp4, class_disclose_comp2, group_disclose_comp2, cdiscl_prompt_comp2, gdiscl_prompt_comp2)
+
+rcorr(as.matrix(correlations))
+    
+```
+
+It outputs the correlation, then the n, then the p value. Very unpleasant to look at. Let's see if we can't make it look better.
+
+The first thing we need to do is instead of just running the correlation we want to make it into an object so I can make adjustments to it.
+
+```{r correlation matrix}
+corr_matrix <- rcorr(as.matrix(correlations))
+
+corr_matrix
+```
+
+
+Looks the same, but now the correlation matrix is an object I can manipulate.
+
+Now, I'd like to make it so that there is not repeated output on the top of the table.
+
+upper.tri(corr_matrix, diag= TRUE)
+
+```{r }
+# x is a matrix containing the data
+# method : correlation method. "pearson"" or "spearman"" is supported
+# removeTriangle : remove upper or lower triangle
+# results :  if "html" or "latex"
+  # the results will be displayed in html or latex format
+corstars <-function(x, method=c("pearson", "spearman"), removeTriangle=c("upper", "lower"),
+                     result=c("none", "html", "latex")){
+    #Compute correlation matrix
+    require(Hmisc)
+    x <- as.matrix(x)
+    correlation_matrix<-rcorr(x, type=method[1])
+    R <- correlation_matrix$r # Matrix of correlation coeficients
+    p <- correlation_matrix$P # Matrix of p-value 
+    
+    ## Define notions for significance levels; spacing is important.
+    mystars <- ifelse(p < .0001, "****", ifelse(p < .001, "*** ", ifelse(p < .01, "**  ", ifelse(p < .05, "*   ", "    "))))
+    
+    ## trunctuate the correlation matrix to two decimal
+    R <- format(round(cbind(rep(-1.11, ncol(x)), R), 2))[,-1]
+    
+    ## build a new matrix that includes the correlations with their appropriate stars
+    Rnew <- matrix(paste(R, mystars, sep=""), ncol=ncol(x))
+    diag(Rnew) <- paste(diag(R), " ", sep="")
+    rownames(Rnew) <- colnames(x)
+    colnames(Rnew) <- paste(colnames(x), "", sep="")
+    
+    ## remove upper triangle of correlation matrix
+    if(removeTriangle[1]=="upper"){
+      Rnew <- as.matrix(Rnew)
+      Rnew[upper.tri(Rnew, diag = TRUE)] <- ""
+      Rnew <- as.data.frame(Rnew)
+    }
+    
+    ## remove lower triangle of correlation matrix
+    else if(removeTriangle[1]=="lower"){
+      Rnew <- as.matrix(Rnew)
+      Rnew[lower.tri(Rnew, diag = TRUE)] <- ""
+      Rnew <- as.data.frame(Rnew)
+    }
+    
+    ## remove last column and return the correlation matrix
+    Rnew <- cbind(Rnew[1:length(Rnew)-1])
+    if (result[1]=="none") return(Rnew)
+    else{
+      if(result[1]=="html") print(xtable(Rnew), type="html")
+      else print(xtable(Rnew), type="latex") 
+    }
+} 
+```
+
+```{r}
+corstars(correlations, method=c("pearson"), result="html")
+```
+
+```{r}
+corr_table <- apaCorr(as.matrix(correlations), corrtype = "pearson")
+
+kable(irisStars, format = "markdown")
+
+```
+
+
+
+### Finishing up
