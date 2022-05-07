@@ -1,5 +1,5 @@
 ---
-title: "Portfolio 3"
+title: "Portfolio 3 - Study 1 Visualization"
 author: "Adam"
 date: "4/27/2022"
 output: html_document
@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-The goal of this portfolio was to explore the experience of vizualizations within R. The results were less than stellar. In general, I found that I prefer to make the visualizations outside of R. However, it was valuable to learn about this.
+The goal of this portfolio was to explore the experience of visualizations within R.
 
 #### Getting things working
 
@@ -76,7 +76,6 @@ corr_matrix
       
 Looks the same, but now the correlation matrix is an object I can manipulate.
 
->After a lot of searching, I've decided that using R this way is a terrible way of getting correlations tables, and making them in word is going to remain my primary way of handling them. In a way, much of what I learned in these portfolios is that I prefer to do everything that isn't the actual analyses outside of R.
 
 However, below is a function found online for creating an html table that is much better to look at (in html, at least).
 
@@ -135,13 +134,15 @@ corstars <-function(x, method=c("pearson", "spearman"), removeTriangle=c("upper"
 
 
 
-Once that is done, here is the actual code to get the html output. I couldn't figure out how to embed html into the knited document, and since I don't intend to use this methodology in the future, it didn't seem like a productive rabbit hole to fall down.
+Once that is done, here is the actual code to get the html output. I couldn't figure out how to embed html into the knitted document, and since I don't intend to use this methodology in the future, it didn't seem like a productive rabbit hole to fall down.
 
 ```{r}
 print(corstars(correlations, method=c("pearson"), result="html"), type=html, comment=FALSE)
 ```
 
-> p < .0001 ‘****’, p < .001 ‘***’, p < .01 '**', p < .05 '*'
+p < .0001 ‘****’, p < .001 ‘***’, p < .01 '**', p < .05 '*'
 
 
 ### Finishing up
+
+Somehow, this is worse than cleaning data. R seems great for making graphs, but I think I'll use word to make all of my tables from now on. I wanted to clean up my SEM plots here too, but they were truly a nightmare, and even you said you make them in Powerpoint (which is what I did for my thesis). So, I think a major takeaway has been there's a lot of tasks I don't like doing in R.
